@@ -3,14 +3,22 @@ import { HttpError } from "../helpers/index.js";
 import Event from "../models/event.js";
 
 const getAllEvents = async (req, res) => {
-  const { page = 1, limit = 6 } = req.query;
+  const { page = 1, limit = 6, sort = "asc", sortBy = "none" } = req.query;
   const skip = (page - 1) * limit;
 
-  const count = (await Event.find()).length;
+  const count = await Event.countDocuments();
+
+  const sortOrder = sort === "desc" ? -1 : 1;
+
+  const sortOptions = {};
+  if (sortBy === "title" || sortBy === "date" || sortBy === "organizer") {
+    sortOptions[sortBy] = sortOrder;
+  }
 
   const result = await Event.find({}, "", {
     skip,
     limit,
+    sort: sortOptions,
   });
 
   if (result.length === 0) {
