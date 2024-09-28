@@ -22,13 +22,16 @@ const getAllEvents = async (req, res) => {
   });
 
   if (result.length === 0) {
-    throw HttpError(404, "Not found");
+    res.json({
+      data: [],
+      total: count,
+    });
+  } else {
+    res.json({
+      data: result,
+      total: count,
+    });
   }
-
-  res.json({
-    data: result,
-    total: count,
-  });
 };
 
 const getEventById = async (req, res) => {
